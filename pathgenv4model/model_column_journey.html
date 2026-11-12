@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Explore how the Pathgen project turns original Junyi records into BKT and agent training data.">
+<title>The column journey · Pathgen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{color-scheme:light;--paper:#f4f9fa;--ink:#102f3a;--muted:#47626b;--line:#d6e5e9;--white:#fff;--accent:#0cc0df;--cyan-dark:#006475;--cyan-soft:#e4f7fb;--iris:#524477;--iris-soft:#eeeaf5;--ochre:#77551c;--ochre-soft:#f5eedc;--sans:'DM Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',Consolas,monospace;--serif:'Instrument Serif',Georgia,serif}
+  *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.5 var(--sans);font-optical-sizing:auto} button,input{font:inherit} button{cursor:pointer;color:inherit} a{color:var(--cyan-dark);text-underline-offset:.22em} button,a,input{touch-action:manipulation} :focus-visible{outline:2px solid #00788b;outline-offset:3px} ::selection{background:#c5f3fa;color:#102f3a} [hidden]{display:none!important} svg{display:block} .icon{width:18px;height:18px;flex:none} code{font-family:var(--mono);font-size:.88em;overflow-wrap:anywhere} h1,h2,h3,p{margin:0} h1,h2,h3{line-height:1.08}
+  .shell{width:min(1320px,calc(100% - 80px));margin-inline:auto}.topbar{border-bottom:1px solid var(--line);background:#f4f9fae8;position:sticky;top:0;z-index:4;backdrop-filter:blur(16px)}.top-inner{height:64px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);font-size:17px;font-weight:700;letter-spacing:-.025em}.brand-mark{display:grid;place-items:center;background:var(--accent);color:var(--ink);width:33px;height:33px;border-radius:9px}.brand-sub{font-weight:500;font-size:12px;color:var(--muted);border-left:1px solid var(--line);padding-left:11px;letter-spacing:0}.top-actions{display:flex;gap:8px;align-items:center}.action{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;text-decoration:none;color:var(--ink);white-space:nowrap}.action:hover{background:var(--cyan-soft);border-color:#9dbbc5}.action:active,.segmented button:active{transform:scale(.98)}.action svg{width:15px;height:15px}
+  .hero{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:32px;padding:37px 0 30px}.hero h1{font:400 clamp(3.5rem,6.5vw,6.15rem)/.96 var(--serif);letter-spacing:-.035em}.hero h1 em{color:var(--cyan-dark);font-weight:400;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:.055em;text-underline-offset:.12em}.hero p{max-width:57ch;color:var(--muted);font-size:16px;line-height:1.5;margin-top:13px}.hero-facts{display:grid;grid-template-columns:repeat(3,auto);gap:20px;padding-bottom:4px}.fact{border-left:1px solid #c3dbe0;padding-left:14px;min-width:100px}.fact b{display:block;font:500 clamp(1.15rem,2.2vw,1.85rem)/1.1 var(--mono);letter-spacing:-.04em;color:var(--cyan-dark);font-variant-numeric:tabular-nums}.fact span{display:block;margin-top:6px;font-size:12px;color:var(--muted);white-space:nowrap}
+  .workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(310px,1fr);gap:18px;align-items:stretch}.surface{background:var(--white);border:1px solid var(--line);border-radius:16px;min-width:0}.surface-head{display:flex;gap:12px;justify-content:space-between;align-items:center;min-height:66px;padding:13px 19px;border-bottom:1px solid var(--line)}.surface-head h2{font-size:16px;font-weight:700;letter-spacing:-.02em}.surface-head .sub{font-size:12px;margin-top:5px;color:var(--muted)}.segmented{display:flex;gap:3px;padding:3px;background:#eaf2f4;border-radius:9px;white-space:nowrap}.segmented button{border:0;background:transparent;border-radius:6px;min-height:31px;padding:3px 10px;font-size:12px;font-weight:700}.segmented button[aria-pressed=true]{background:#fff;box-shadow:0 1px 3px #102f3a1b;color:var(--cyan-dark)}.segmented button:hover{color:var(--cyan-dark)}
+  .graph{height:590px;position:relative;isolation:isolate;background-color:#eff8fa;background-image:radial-gradient(#bddce4 1px,transparent 1px);background-size:15px 15px}.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.wire{fill:none;stroke:#a5c4ce;stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke;transition:stroke .25s,opacity .25s}.wire.active{stroke:#00859b;stroke-width:2.15}.wire.secondary.active{stroke:#75649e}.wire.dim{opacity:.27}.wire-flow{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;vector-effect:non-scaling-stroke;pointer-events:none}.wire-flow.secondary{stroke:#9985c0}.wire-dot{fill:#f0fafd;stroke:#5f8a97;stroke-width:1.5;vector-effect:non-scaling-stroke}.lane-label{position:absolute;top:14px;left:19px;font:500 10px/1.2 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:#4a6d77}.lane-label.right{left:auto;right:19px}.junction{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:9px;height:9px;background:#fbfdfe;border:1.5px solid #7297a2;border-radius:50%}
+  .node{--node-accent:var(--cyan-dark);--node-fill:var(--cyan-soft);position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);width:min(39%,242px);min-height:78px;padding:12px 11px;display:grid;grid-template-columns:34px minmax(0,1fr) 13px;gap:9px;align-items:center;text-align:left;border-radius:11px;border:1px solid #b4cdd4;background:#fff;box-shadow:0 3px 9px #183a460d;transition:opacity .22s,border-color .2s,box-shadow .2s,background .2s}.node.mapping{--node-accent:var(--ochre);--node-fill:var(--ochre-soft)}.node.agent{--node-accent:var(--iris);--node-fill:var(--iris-soft)}.node:hover{border-color:var(--node-accent);box-shadow:0 5px 13px #102f3a20}.node[aria-pressed=true]{border-color:var(--node-accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--node-accent) 20%,transparent),0 7px 15px #102f3a13}.node:active{transform:translate(-50%,-50%) scale(.98)}.node.dim{opacity:.53}.node-glyph{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;background:var(--node-fill);color:var(--node-accent)}.node strong{display:block;letter-spacing:-.022em;line-height:1.18;font-size:14px;overflow-wrap:anywhere}.node small{display:block;color:var(--muted);margin-top:5px;font-size:11px;line-height:1.25}.node>.icon{width:13px;color:var(--node-accent)}.graph-note{display:flex;gap:8px;align-items:flex-start;padding:10px 16px;border-top:1px solid var(--line);border-radius:0 0 15px 15px;background:#f5fbfc;color:#496a76;font-size:12px}.graph-note [data-icon]{flex:none;margin-top:2px}.graph-note svg{width:13px;height:13px}
+  .inspector{display:flex;flex-direction:column}.inspector .surface-head{justify-content:flex-start}.inspector .surface-head .icon{color:var(--cyan-dark)}.inspector-content{padding:18px 18px 14px;min-width:0}.detail-heading{display:flex;gap:11px;align-items:center}.detail-heading .node-glyph{width:41px;height:41px;flex:none}.detail-heading h3{font-size:23px;letter-spacing:-.035em}.file-label{display:block;margin-top:5px;color:var(--muted);font:500 11px/1.3 var(--mono);overflow-wrap:anywhere}.detail-copy{margin:11px 0 12px;color:var(--muted);font-size:13px}.detail-facts{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}.pill{display:inline-flex;align-items:center;min-height:25px;padding:2px 8px;border-radius:999px;background:var(--cyan-soft);color:#175c6b;font-size:11px;font-weight:700}.pill.agent{background:var(--iris-soft);color:var(--iris)}.pill.mapping{background:var(--ochre-soft);color:var(--ochre)}.column-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px;font-size:12px;font-weight:700}.column-head span{color:var(--muted);font-weight:500}.column-list{max-height:189px;overflow:auto;scrollbar-width:thin;scrollbar-color:#a5bbc4 transparent;overscroll-behavior:contain}.column-row{width:100%;border:0;border-top:1px solid #e2ebee;background:#fff;display:flex;gap:8px;align-items:center;text-align:left;padding:7px 5px;min-height:36px;color:var(--ink)}.column-row:hover,.column-row:focus-visible{background:#eaf7fa}.column-row:active{background:#d5f0f7}.column-row code{font-size:11px;line-height:1.35;font-weight:600;min-width:0}.column-row .tag{margin-left:auto}.column-row .icon{width:13px;height:13px;color:#447383}.tag{font:600 9px/1.3 var(--sans);letter-spacing:.035em;text-transform:uppercase;border-radius:4px;padding:3px 5px;background:#e5f2f5;color:#265a67;white-space:nowrap}.tag.feature,.tag.target{background:#eeeaf5;color:#4f4176}.tag.target{background:#efe1ef;color:#673c65}.tag.map{background:#f6efdf;color:#71511e}.tag.context,.tag.reference,.tag.tracking{background:#edf2f3;color:#435b63}.inspector-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.inspector-actions .action{min-height:31px;font-size:11px;padding:4px 8px}
+  .next{margin-top:19px;padding:17px 19px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px;background:#e3f3f7;border:1px solid #d5e9ee;border-radius:13px}.next h2{font-size:16px;letter-spacing:-.02em}.next p{margin-top:5px;font-size:13px;color:var(--muted)}.footer{display:flex;justify-content:space-between;gap:14px;padding:21px 0 27px;color:var(--muted);font-size:12px}.footer a{font-weight:700}
+  dialog{width:min(630px,calc(100vw - 28px));max-height:min(82dvh,780px);margin:auto;border:1px solid #c3d8de;border-radius:16px;padding:0;color:var(--ink);background:white;box-shadow:0 23px 80px #102f3a40} dialog::backdrop{background:#102f3aa3;backdrop-filter:blur(4px)}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:1}.dialog-head h2{font-size:19px;letter-spacing:-.02em}.close{width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:white;display:grid;place-items:center}.close:hover{background:var(--cyan-soft)}.dialog-content{padding:19px 22px 23px}.dialog-content p{font-size:14px;color:var(--muted);margin:0 0 14px}.dialog-content p code,.dialog-content li code{color:var(--ink);background:#edf6f8;padding:1px 3px;border-radius:3px}.dialog-content h3{margin:16px 0 8px;font-size:15px}.field-name{font:600 clamp(.92rem,3vw,1.35rem)/1.25 var(--mono);overflow-wrap:anywhere;display:block;margin:11px 0 12px}.sources{display:flex;flex-wrap:wrap;gap:7px}.trace-note{padding:10px 12px;background:#eff7f9;border-radius:8px;margin:12px 0 0;font-size:13px}.search{width:100%;min-height:41px;border:1px solid #a5c5cf;border-radius:8px;background:#fcfdfe;color:var(--ink);padding:8px 11px;margin-bottom:9px}.results{max-height:48dvh;overflow:auto}.result-source{margin-left:auto;font-size:10px;color:var(--muted);text-align:right}.table-wrap{overflow:auto}.data-table{width:100%;border-collapse:collapse;font-size:12px;text-align:left}.data-table th,.data-table td{padding:7px 8px;border-bottom:1px solid #e1ebee;vertical-align:top}.data-table th{background:#e9f4f6;color:var(--ink)}.data-table td{overflow-wrap:anywhere}.history-demo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0}.history-demo div{padding:10px;border:1px solid var(--line);border-radius:8px;font-size:12px;background:#f0f8fa}.history-demo div:last-child{background:var(--iris-soft);border-color:#dbd2e9}.history-demo b{display:block;margin-bottom:3px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.skip{position:fixed;top:4px;left:4px;z-index:8;transform:translateY(-150%);background:white;padding:8px}.skip:focus{transform:none}
+  @media(max-width:1050px){.shell{width:calc(100% - 44px)}.hero-facts{gap:10px}.fact{min-width:78px;padding-left:9px}.workspace{grid-template-columns:minmax(0,1.48fr) minmax(292px,1fr)}.node{grid-template-columns:28px minmax(0,1fr) 10px;gap:6px;padding:9px}.node .node-glyph{width:28px;height:28px}.node strong{font-size:12px}.node small{font-size:10px}.surface-head{padding-inline:13px}.segmented button{padding-inline:7px}}
+  @media(max-width:780px){.hero{grid-template-columns:1fr;gap:18px;padding:27px 0 22px}.hero-facts{justify-content:start;gap:20px}.hero h1{font-size:clamp(3.25rem,10vw,5.25rem)}.workspace{grid-template-columns:1fr}.graph{height:550px}.column-list{max-height:250px}.inspector{scroll-margin-top:70px}.node{width:min(41%,235px)}.node strong{font-size:13px}.node small{font-size:11px}}
+  @media(max-width:430px){.shell{width:calc(100% - 28px)}.top-inner{height:56px}.brand-sub{display:none}.action{padding-inline:8px}.hero-facts{gap:12px}.fact span{font-size:10px}.graph{height:510px}.node{min-height:72px;padding:7px;grid-template-columns:24px minmax(0,1fr);gap:6px}.node .node-glyph{width:24px;height:25px}.node .node-glyph .icon{width:14px;height:14px}.node>.icon{display:none}.node strong{font-size:12px}.node small{font-size:10px}.lane-label{font-size:9px;left:10px;top:10px}.lane-label.right{right:10px}.surface-head{gap:5px}.surface-head h2{font-size:14px}.surface-head .sub{font-size:11px}.segmented button{font-size:11px;padding-inline:6px}.next{grid-template-columns:1fr;justify-items:start}.footer{flex-direction:column}.dialog-content,.dialog-head{padding-inline:15px}}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+  @media(prefers-reduced-transparency:reduce),(prefers-contrast:more){.topbar{background:var(--paper);backdrop-filter:none}dialog::backdrop{backdrop-filter:none}.node,.surface{border-color:#678692}}
+
+  .process-list{padding-left:1.55rem;margin:0 0 18px}.process-list li{padding:4px 0 7px 4px}.process-list li::marker{color:var(--cyan-dark);font-weight:700}.process-list strong{font-size:14px}.process-list li p{margin:3px 0 7px}.tag.script,.tag.sampling,.tag.join{background:var(--cyan-soft);color:var(--cyan-dark)}
+</style>
+</head>
+<body>
+<a class="skip" href="#journey">Skip to the data tree</a>
+<header class="topbar">
+  <div class="shell top-inner">
+    <a class="brand" href="#top"><span class="brand-mark" data-icon="fork" aria-hidden="true"></span>Pathgen<span class="brand-sub">Model studio</span></a>
+    <div class="top-actions"><button class="action" type="button" id="open-index"><span data-icon="search" aria-hidden="true"></span>Column index</button></div>
+  </div>
+</header>
+<main class="shell" id="top">
+  <section class="hero" aria-labelledby="page-title">
+    <div><h1 id="page-title">The column <em>journey.</em></h1><p>See how Junyi’s problem log and exercise table connect, then follow a real encounter through skill mapping, BKT fitting, and the three agent datasets.</p></div>
+    <div class="hero-facts" aria-label="Project totals"><div class="fact"><b>25.9M</b><span>Junyi encounters</span></div><div class="fact"><b>10</b><span>Modeled skills</span></div><div class="fact"><b>155K</b><span>Agent examples</span></div></div>
+  </section>
+  <section class="workspace" id="journey" aria-label="Explore the data lineage">
+    <div class="surface">
+      <header class="surface-head"><div><h2>Dataset lineage</h2><p class="sub">Select a node to inspect its columns.</p></div><div class="segmented" aria-label="Highlight a path"><button type="button" data-filter="all" aria-pressed="true">All paths</button><button type="button" data-filter="bkt" aria-pressed="false">BKT</button><button type="button" data-filter="agent" aria-pressed="false">Agent</button></div></header>
+      <div class="graph" id="graph" aria-label="Clickable data lineage tree">
+        <svg class="wires" id="wires" aria-hidden="true"></svg>
+        <span class="lane-label">Junyi practice records</span><span class="lane-label right">Junyi exercise catalog</span>
+        <div class="junction" id="junction" aria-hidden="true"></div>
+        <div id="nodes"></div>
+      </div>
+      <p class="graph-note"><span data-icon="link" aria-hidden="true"></span><span>The log’s <code>exercise</code> matches the exercise table’s <code>name</code>. The skill map assigns the modeled skill.</span></p>
+    </div>
+    <aside class="surface inspector" id="inspector" aria-label="Column inspector">
+      <header class="surface-head"><span data-icon="columns" aria-hidden="true"></span><h2>Column inspector</h2></header>
+      <div class="sr-only" id="stage-status" role="status"></div>
+      <div class="inspector-content" id="detail"></div>
+    </aside>
+  </section>
+  <section class="next" aria-labelledby="history-title"><div><h2>Which answer belongs to which column?</h2><p>Follow one prediction to see which encounters supply the features and which one supplies the target.</p></div><button class="action" id="show-example" type="button"><span data-icon="route" aria-hidden="true"></span>Walk through an example</button></section>
+  <footer class="footer"><span>Pathgen · Junyi 2015 data lineage</span><a href="model/agent_csv_explain.md">Read the generator notes</a></footer>
+</main>
+<dialog id="dialog" aria-labelledby="dialog-title"><div class="dialog-head"><h2 id="dialog-title"></h2><button type="button" class="close" id="close-dialog" aria-label="Close details" data-icon="x"></button></div><div class="dialog-content" id="dialog-content"></div></dialog>
+<script>
+const icons = {
+  fork:'<circle cx="6" cy="18" r="2"/><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8m0 0c0-6 12-2 12-8"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+  database:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14a8 3 0 0 0 16 0V5M4 12a8 3 0 0 0 16 0"/>',
+  map:'<path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15"/>',
+  table:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14h18M9 9v11"/>',
+  sliders:'<path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="2" fill="currentColor" stroke="none"/>',
+  code:'<path d="m8 6-6 6 6 6m8-12 6 6-6 6M14 4l-4 16"/>',
+  layers:'<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5m-18 4 9 5 9-5"/>',
+  columns:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m6-16v16"/>',
+  link:'<path d="M10 13a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-6-5l-1 1m2 5a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 6 5l1-1"/>',
+  route:'<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h9a3 3 0 0 0 0-6H7a3 3 0 0 1 0-6h9"/>',
+  chevron:'<path d="m9 18 6-6-6-6"/>',
+  arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',
+  x:'<path d="m6 6 12 12M18 6 6 18"/>',
+};
+function icon(name){return `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name] || icons.chevron}</svg>`;}
+document.querySelectorAll('[data-icon]').forEach(e=>{e.innerHTML=icon(e.dataset.icon)});
+const raw = [
+ ['user_id','Source','Junyi learner identifier. Group by student, assign one student split, and preserve the ID for auditing.',['bkt','agent']],
+ ['exercise','Source','Exercise code on each practice encounter. It matches name in junyi_Exercise_table.csv. To assign a Pathgen skill, the generators look up exercise and problem_type together in skill_map.csv.',['metadata','map','bkt','agent']],
+ ['problem_type','Source','Question template code within a Junyi exercise. Keep it as text, including the value 0. PLUS and MINUS can belong to the same exercise.',['map','bkt','agent']],
+ ['problem_number','Context','Junyi’s practice counter within an exercise. Pathgen derives a separate count of earlier encounters for the candidate skill.',['agent']],
+ ['topic_mode','Context','Junyi practice context flag. It stays in the source log.',[]],
+ ['suggested','Context','Whether Junyi suggested the exercise. It stays in the source log.',[]],
+ ['review_mode','Context','Whether the encounter was in Junyi’s review mode. It stays in the source log.',[]],
+ ['time_done','Source','Completion time stored as Unix microseconds. Sort by student and this timestamp before building histories.',['bkt','agent']],
+ ['time_taken','Source','Total time spent, in seconds. Earlier encounters supply the last duration and recent median. Negative durations are treated as missing.',['agent']],
+ ['time_taken_attempts','Context','Ampersand-separated durations of individual attempts. Available for future feature comparisons.',[]],
+ ['correct','Source','Junyi first-attempt correctness with a hint override. A hint forces this flag to false. BKT converts it to 0 or 1; the agent uses earlier flags as features and the candidate flag for its target.',['bkt','agent']],
+ ['count_attempts','Source','Number of submissions. Earlier counts supply attempt features; more than one candidate attempt also triggers the struggle target.',['agent']],
+ ['hint_used','Source','Whether a hint was requested. Use earlier flags for behavior and the candidate flag for its target.',['agent']],
+ ['count_hints','Context','Number of hints. A possible later feature when Pathgen records comparable hint counts.',[]],
+ ['hint_time_taken_list','Context','Timing entries for hints. Available in the source log.',[]],
+ ['earned_proficiency','Context','Junyi’s proficiency outcome. Pathgen estimates mastery with BKT.',[]],
+ ['points_earned','Context','Points awarded under Junyi’s own scoring rules.',[]],
+];
+const mappingColumns = [
+ ['template_id','Map','Locally assigned ID for a mapping rule, such as T007. The 16 rules cover ten modeled skills.',['raw']],
+ ['exercise','Map','Reviewed Junyi exercise code. The map builder checks for exactly one matching name in the exercise table. In the fitting and agent generators, exercise and problem_type form the lookup key.',['raw','metadata','map-builder']],
+ ['problem_type','Map','Recorded template code paired with exercise. For example, MINUS identifies the subtraction rule within the combined exercise.',['raw']],
+ ['modeled_skill_id','Map','Pathgen skill ID assigned by the mapping rule. BKT and the agent use this value.',['bkt','agent']],
+ ['approved_skill_id','Reference','Group number from an earlier seven-group curriculum. Pathgen’s ten-skill crosswalk uses modeled_skill_id.',['bkt']],
+];
+const metadataColumns = [
+ ['name','Join key','Exercise identifier in the catalog. It matches exercise in the problem log. The skill-map builder checks this column to verify that each mapped exercise appears exactly once.',['raw','map-builder','map']],
+ ['live','Reference','Availability flag from the catalog snapshot. The builders use the reviewed skill-map rules to decide which log encounters to retain.',['map-builder']],
+ ['prerequisites','Reference','Junyi’s listed prerequisite exercise codes. These are curriculum context. Pathgen has its own lesson order.',['map-builder']],
+ ['h_position','Reference','Horizontal position in Junyi’s exercise map.',['map-builder']],
+ ['v_position','Reference','Vertical position in Junyi’s exercise map.',['map-builder']],
+ ['creation_date','Reference','When the exercise was created. time_done in the log records when a student finished a particular encounter.',['raw']],
+ ['seconds_per_fast_problem','Reference','Junyi’s benchmark for a fast answer. Pathgen’s duration features use the student’s recorded time_taken from the problem log.',['raw','agent']],
+ ['pretty_display_name','Reference','Full display label for the exercise.',['map-builder']],
+ ['short_display_name','Reference','Short display label for the exercise.',['map-builder']],
+ ['topic','Reference','Junyi’s topic grouping. Pathgen’s modeled skill IDs come from the reviewed skill map.',['map']],
+ ['area','Reference','Junyi’s subject area. Used as catalog context when reviewing which exercises fit the project’s scope.',['map-builder']],
+];
+const bktColumns = [
+ ['user_id','Copied','Copy Junyi’s learner ID. Use it to group sequences and keep validation and test students out of fitting.',['raw']],
+ ['order_id','Derived','Sort each learner’s records by Junyi time_done. Number the retained encounters from 1 after sampling. BKT reads the resulting order within each skill.',['raw']],
+ ['modeled_skill_id','Derived','Look up the exact exercise and problem_type pair in skill_map.csv. This is the skill that receives the observation.',['raw','map']],
+ ['correct','Copied','Convert Junyi’s Boolean flag to 1 or 0. The fitting CSV preserves its hint override. BKT uses the value as the response observation.',['raw','params']],
+];
+const parameterColumns = [
+ ['initial_mastery','Estimated','The estimated probability a student has mastered the modeled skill before their first recorded response to it.',['bkt']],
+ ['learn','Estimated','The probability an unmastered student moves to mastery after a practice opportunity.',['bkt']],
+ ['guess','Estimated','The probability of a correct response while unmastered. The opposites fit reached the optimizer’s lower bound, so review it on Pathgen questions.',['bkt']],
+ ['slip','Estimated','The probability of an incorrect observation while mastered, under the Junyi label definition.',['bkt']],
+ ['forget','Fixed','Fixed at 0 for this standard BKT fit. Mastery is updated from earlier observations when preparing agent rows.',['bkt','agent']],
+];
+const agentColumns = [
+ ['user_id','Tracking','Copied from the original Junyi learner ID. This keeps the student in one split.',['raw']],
+ ['candidate_time_done','Tracking','Copied from the candidate encounter’s time_done for tracing and verification. Exclude this completion timestamp from the model inputs.',['raw']],
+ ['candidate_skill_id','Feature','Map the candidate’s exercise and problem_type pair to modeled_skill_id.',['raw','map']],
+ ['candidate_difficulty','Feature','Observed struggle rate for that Junyi template, estimated from training students. For a training row, exclude its student fold. Calibrate the scale against teacher difficulty tags before live use.',['raw','map','agent']],
+ ['last_correct','Feature','Copy correct from the immediately preceding mapped encounter for this student.',['raw']],
+ ['last_attempt_count','Feature','Copy count_attempts from that earlier encounter.',['raw']],
+ ['last_hint_used','Feature','Copy hint_used from that earlier encounter.',['raw']],
+ ['last_duration_sec','Feature','Copy valid time_taken from that earlier encounter. Negative durations become missing.',['raw']],
+ ['recent_correct_rate','Feature','Calculate the fraction of correct flags over the previous five mapped encounters, or all available if fewer than five.',['raw']],
+ ['recent_hint_rate','Feature','Calculate the fraction of hint_used flags over the same prior window.',['raw']],
+ ['recent_mean_attempts','Feature','Average count_attempts over the same prior window.',['raw']],
+ ['recent_median_duration_sec','Feature','Take the median of valid time_taken values in that window. This limits the effect of unusually long times.',['raw']],
+ ['candidate_skill_prior_encounters','Feature','Count earlier mapped encounters for the candidate’s skill. The candidate itself does not increment this value until after the feature is recorded.',['raw','map']],
+ ['candidate_skill_bkt_mastery','Feature','Take the BKT mastery estimate before observing the candidate’s answer. Training uses parameters fitted on other student folds. Validation and test use the frozen fit.',['bkt','params','agent']],
+ ['struggle_on_next_question','Target','Set 1 when the candidate has correct=false, more than one attempt, or hint_used=true. Set 0 otherwise. The candidate’s result contributes to this label only.',['raw','agent']],
+];
+const rules = [
+ ['T001','properties_of_numbers_2','additive-inverse','INT_OPPOSITE_POS4'],['T002','comparing_absolute_values','0','INT_ABS_COMPARE'],['T003','number_line_3','0','INT_NUMBER_LINE'],['T004','ordering_negative_numbers','0','INT_ORDER_NEG'],['T005','adding_negative_numbers','PLUS','INT_ADD_NEG'],['T006','adding_and_subtracting_negative_numbers','PLUS','INT_ADD_NEG'],['T007','adding_and_subtracting_negative_numbers','MINUS','INT_SUB_NEG'],['T008','multiplying_and_dividing_negative_numbers','multiplying','INT_MULT_NEG'],['T009','multiplying_and_dividing_negative_numbers','dividing','INT_DIV_NEG'],['T010','operations_with_negative_numbers','0','INT_EXPR_NEG'],['T011','operations_with_negative_numbers','1','INT_EXPR_NEG'],['T012','operations_with_negative_numbers','2','INT_EXPR_NEG'],['T013','negative_number_word_problems','february_afternoon_result','INT_CONTEXT'],['T014','negative_number_word_problems','sledding_delta','INT_CONTEXT'],['T015','negative_number_word_problems','scuba_result','INT_CONTEXT'],['T016','negative_number_word_problems','dolphin_delta','INT_CONTEXT'],
+];
+const legacyGroups=[1,1,2,2,3,3,3,4,5,6,6,6,7,7,7,7];
+const mapBuildSteps = [
+ ['MAPPINGS','Script','The map builder stores 16 reviewed mappings in the MAPPINGS tuple. Each row gives a Junyi exercise and problem type one modeled skill ID. For example, PLUS and MINUS get separate skill IDs.',['raw','map']],
+ ['create_skill_map()','Script','Check that the template IDs and exercise/problem-type pairs are unique. Read name from junyi_Exercise_table.csv and verify that each of the nine distinct mapped exercise names occurs exactly once.',['metadata','map']],
+ ['Write skill_map.csv','Output','Write the five-column header and the reviewed rules to a temporary CSV, then replace the output file. The fitting and agent scripts look up modeled_skill_id in this file.',['map','fit-builder','agent']],
+];
+const fittingBuildSteps = [
+ ['load_mapping()','Script','Read skill_map.csv and look up an encounter by its exercise and problem_type. Keep mapped Junyi encounters and assign their modeled skill IDs.',['raw','map']],
+ ['student_split()','Script','Use the original deterministic student split to hold out about 20% of learners for test. The initial fitting export contains the development students only.',['raw']],
+ ['parse_correct()','Script','Convert the Junyi correctness flag to 1 or 0. The fitting data preserves the recorded hint override.',['raw','bkt']],
+ ['create_bkt_fitting()','Script','Stage mapped rows in SQLite, order by learner and time_done, and use the source row to break timestamp ties. Assign order_id and export the four-column development CSV.',['raw','bkt']],
+ ['Reserve validation and cap each skill','Sampling','A separate sampling pass reserved validation learners, then kept complete learner histories within each skill up to 30,000 rows. That reduced the fitting CSV from 765,596 to 263,813 rows.',['bkt','params']],
+];
+const nodes = {
+ raw:{title:'Junyi problem log',file:'junyi_ProblemLog_original.csv',icon:'database',kind:'source',x:26,y:12,sub:'25.9M encounters · 17 columns',about:'Each row records a real practice encounter. The exercise code identifies the exercise in the catalog. Five log columns feed BKT preparation and eight feed the agent pipeline.',facts:['25,925,992 encounters','17 original columns'],fields:raw,links:[['Source CSV','../pathgen0.4/junyi_ProblemLog_original.csv']],action:['Compare the two Junyi CSVs','metadata']},
+ metadata:{title:'Junyi exercise table',file:'junyi_Exercise_table.csv',icon:'table',kind:'source',x:74,y:12,sub:'837 catalog rows · 11 columns',about:'The catalog describes exercises, including their names, topics, and prerequisites. The skill-map builder checks name to validate the reviewed exercise codes.',facts:['837 rows','835 distinct names','11 catalog columns'],fields:metadataColumns,links:[['Exercise table CSV','../pathgen0.4/junyi_Exercise_table.csv']],action:['Compare the two Junyi CSVs','metadata']},
+ 'fit-builder':{title:'BKT CSV builder',file:'bkt_fitting_csv_creation.py',icon:'code',kind:'source',x:26,y:31,sub:'Map, split, and order encounters',about:'This script joins Junyi encounters to the reviewed skill map and builds the initial development CSV. A separate sampling pass reserved validation learners and applied the 30,000-row cap before the notebook fit.',facts:['5 source fields','765,596 development rows'],heading:'Build steps',fields:fittingBuildSteps,links:[['Open Python script','../pathgen0.4/csv/bkt_fitting_csv_creation.py']],action:['How the fitting CSV was built','fitting-creation']},
+ 'map-builder':{title:'Skill map builder',file:'skill_map_csv_creation.py',icon:'code',kind:'mapping',x:74,y:31,sub:'Reviewed rules + catalog checks',about:'The Python script writes the reviewed Junyi template mappings after checking the mapping keys and exercise names against the original exercise table.',facts:['16 reviewed rules','9 catalog names checked'],heading:'Build steps',fields:mapBuildSteps,links:[['Open Python script','../pathgen0.4/csv/skill_map_csv_creation.py']],action:['How the map was built','map-creation']},
+ bkt:{title:'BKT fitting CSV',file:'bkt_fitting.csv',icon:'table',kind:'source',x:26,y:50,sub:'263,813 encounters · 4 columns',about:'Map five source fields into four fitting columns. Keep complete chronological student histories for each selected skill and cap the fit at 30,000 rows per skill.',facts:['263,813 fitting rows','≤ 30,000 per skill'],fields:bktColumns,links:[['Fitting CSV','../roror/bkt_fitting.csv'],['Fitting notes','model/bkt_fitting.md']]},
+ map:{title:'Skill map',file:'skill_map.csv',icon:'map',kind:'mapping',x:74,y:50,sub:'16 rules · 10 modeled skills',about:'The exercise catalog verifies exercise names. This file supplies the reviewed exercise and problem type pairs that the fitting and agent generators use to assign skill IDs.',facts:['16 exact pairs','10 skill IDs'],fields:mappingColumns,links:[['Skill map CSV','../pathgen0.4/csv/skill_map.csv']],action:['View 16 mapping rules','rules']},
+ params:{title:'Fitted BKT model',file:'bkt_fitting.ipynb → bkt_parameters.json',icon:'sliders',kind:'source',x:26,y:69,sub:'10 skill fits · no forgetting',about:'The notebook fitted all ten skills. On 3,921 held-out Junyi students, mean log loss across skills was 0.446 versus 0.494 for a constant per-skill baseline.',facts:['10 skill fits','3,921 validation students'],fields:parameterColumns,links:[['Executed notebook','../roror/bkt_fitting.ipynb'],['Parameter JSON','../roror/bkt_parameters.json']],action:['How BKT was fitted','bkt-fit']},
+ agent:{title:'Agent CSV generator',file:'agent_csv.py',icon:'code',kind:'agent',x:74,y:69,sub:'Raw history + skill map + BKT',about:'The generator matches 957,538 log encounters using the skill map. Of those, 933,328 have earlier mapped history. It builds prior behavior and estimates difficulty and mastery before sampling each split.',facts:['8 raw input columns','5 training folds'],fields:agentColumns,links:[['Working script','../roror/agent_csv.py'],['Function guide','model/agent_csv_explain.md']],action:['See the transformation','example']},
+ sets:{title:'Three agent CSVs',file:'agent_training · agent_validation · agent_testing',icon:'layers',kind:'agent',x:74,y:88,sub:'155,000 rows · 15 columns each',about:'All examples come from recorded Junyi encounters. Each split has equal quotas across skills, preserves each skill’s observed outcome mix to rounding, and uses a separate set of students.',facts:['100,000 training','25,000 validation','30,000 testing'],fields:agentColumns,links:[['Training CSV','../roror/agent_training.csv'],['Validation CSV','../roror/agent_validation.csv'],['Testing CSV','../roror/agent_testing.csv']],action:['Compare the splits','splits']},
+};
+const edges = [
+ ['metadata','map-builder','bottom','top','shared'],['raw','junction','right','center','shared'],['map-builder','map','bottom','top','shared'],['map','junction','left','center','shared'],
+ ['junction','fit-builder','center','right','bkt'],['fit-builder','bkt','bottom','top','bkt'],['bkt','params','bottom','top','bkt'],
+ ['junction','agent','center','left-high','agent'],['params','agent','right','left-low','bridge'],['agent','sets','bottom','top','agent'],
+];
+const relatedFields = {raw:{exercise:['metadata:name']},metadata:{name:['raw:exercise','map:exercise']},map:{exercise:['metadata:name']}};
+const fieldSources = {
+ map:{exercise:['raw:exercise'],problem_type:['raw:problem_type'],modeled_skill_id:['raw:exercise','raw:problem_type']},
+ bkt:{user_id:['raw:user_id'],order_id:['raw:time_done'],modeled_skill_id:['raw:exercise','raw:problem_type','map:modeled_skill_id'],correct:['raw:correct']},
+ params:{initial_mastery:['bkt:correct','bkt:order_id'],learn:['bkt:correct','bkt:order_id'],guess:['bkt:correct'],slip:['bkt:correct']},
+ agent:{
+   user_id:['raw:user_id'],candidate_time_done:['raw:time_done'],candidate_skill_id:['raw:exercise','raw:problem_type','map:modeled_skill_id'],
+   candidate_difficulty:['raw:exercise','raw:problem_type','raw:correct','raw:count_attempts','raw:hint_used'],
+   last_correct:['raw:correct'],last_attempt_count:['raw:count_attempts'],last_hint_used:['raw:hint_used'],last_duration_sec:['raw:time_taken'],
+   recent_correct_rate:['raw:correct','raw:time_done'],recent_hint_rate:['raw:hint_used','raw:time_done'],recent_mean_attempts:['raw:count_attempts','raw:time_done'],recent_median_duration_sec:['raw:time_taken','raw:time_done'],
+   candidate_skill_prior_encounters:['map:modeled_skill_id','raw:time_done'],
+   candidate_skill_bkt_mastery:['params:initial_mastery','params:learn','params:guess','params:slip','raw:correct'],
+   struggle_on_next_question:['raw:correct','raw:count_attempts','raw:hint_used'],
+ },
+};
+const graph = document.querySelector('#graph');
+const wires = document.querySelector('#wires');
+const detail = document.querySelector('#detail');
+const dialog = document.querySelector('#dialog');
+const dialogContent = document.querySelector('#dialog-content');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+const nodeContainer = document.querySelector('#nodes');
+let selected = 'raw', filter = 'all', opener = null, activeAnimation = null;
+const esc = value => String(value).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const badge = label => `<span class="tag ${label.toLowerCase()}">${esc(label)}</span>`;
+const glyph = node => `<span class="node-glyph" style="--node-fill:var(--${node.kind==='agent'?'iris-soft':node.kind==='mapping'?'ochre-soft':'cyan-soft'});--node-accent:var(--${node.kind==='agent'?'iris':node.kind==='mapping'?'ochre':'cyan-dark'})">${icon(node.icon)}</span>`;
+const button = (label, action, glyphName='arrow') => `<button class="action" type="button" data-action="${action}">${esc(label)}${icon(glyphName)}</button>`;
+const link = ([label, href]) => `<a class="action" href="${href}">${esc(label)}${icon('arrow')}</a>`;
+nodeContainer.innerHTML = Object.entries(nodes).map(([id,n])=>`<button type="button" id="node-${id}" class="node ${n.kind}" data-node="${id}" aria-controls="detail" aria-pressed="false" style="--x:${n.x}%;--y:${n.y}%"><span class="node-glyph">${icon(n.icon)}</span><span><strong>${esc(n.title)}</strong><small>${esc(n.sub)}</small></span>${icon('chevron')}</button>`).join('');
+
+function point(id, port){
+  const box=(id==='junction'?document.querySelector('#junction'):document.querySelector(`#node-${id}`)).getBoundingClientRect();
+  const origin=graph.getBoundingClientRect();
+  return {x:(port.startsWith('left')?box.left:port==='right'?box.right:(box.left+box.right)/2)-origin.left,
+          y:(port==='top'?box.top:port==='bottom'?box.bottom:port==='left-high'?box.top+box.height*.28:port==='left-low'?box.top+box.height*.72:(box.top+box.bottom)/2)-origin.top};
+}
+function edgePath([from,to,a,b,kind]){
+  const p=point(from,a),q=point(to,b);
+  if(kind==='bridge'||a==='right'||a.startsWith('left')||b.startsWith('left')||b==='right'){
+    const mid=(p.x+q.x)/2;
+    return `M ${p.x} ${p.y} C ${mid} ${p.y} ${mid} ${q.y} ${q.x} ${q.y}`;
+  }
+  const mid=(p.y+q.y)/2;
+  return `M ${p.x} ${p.y} C ${p.x} ${mid} ${q.x} ${mid} ${q.x} ${q.y}`;
+}
+function activeEdge(from,to,kind){
+  if(filter!=='all') return kind===filter||kind==='shared'||kind==='bridge'&&filter==='agent';
+  return from===selected||to===selected||selected==='sets'&&kind==='bridge';
+}
+function renderEdges(flow=false){
+  wires.replaceChildren();
+  for(const edge of edges){
+    const [from,to,,,kind]=edge;
+    const active=activeEdge(from,to,kind);
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',edgePath(edge));
+    const secondary=kind==='agent'||kind==='bridge';
+    path.setAttribute('class',`wire${active?' active':''}${secondary?' secondary':''}${filter!=='all'&&!active?' dim':''}`);
+    wires.append(path);
+    if(flow&&active&&!reduced.matches){
+      const pulse=path.cloneNode();
+      pulse.setAttribute('class',`wire-flow${secondary?' secondary':''}`);
+      wires.append(pulse);
+      const length=path.getTotalLength();
+      const segment=Math.min(34,length*.7);
+      pulse.style.strokeDasharray=`${segment} ${length+segment}`;
+      pulse.animate([{strokeDashoffset:segment,opacity:0},{opacity:1,offset:.16},{opacity:1,offset:.74},{strokeDashoffset:-length,opacity:0}],{duration:440+length*1.15,easing:'cubic-bezier(.18,.64,.26,1)'}).finished.then(()=>pulse.remove(),()=>{});
+    }
+  }
+}
+function motion(el,distance=6){
+  if(reduced.matches)return;
+  const style=getComputedStyle(el);
+  const previous=activeAnimation?.effect?.target===el ? {opacity:style.opacity,transform:style.transform}:null;
+  activeAnimation?.cancel();
+  activeAnimation=el.animate([previous||{opacity:.65,transform:`translateY(${distance}px)`},{opacity:1,transform:'translateY(0)'}],{duration:230,easing:'cubic-bezier(.2,.7,.2,1)'});
+}
+function filterNodes(){
+  document.querySelectorAll('[data-node]').forEach(e=>{
+    const id=e.dataset.node;
+    const shared=['raw','metadata','map','map-builder','params'].includes(id);
+    e.classList.toggle('dim',!shared&&(filter==='bkt'&&(id==='agent'||id==='sets')||filter==='agent'&&(id==='bkt'||id==='fit-builder')));
+    e.setAttribute('aria-pressed',String(id===selected));
+  });
+}
+function selectNode(id,{animate=true,scroll=false}={}){
+  selected=id;
+  const n=nodes[id];
+  document.querySelector('#stage-status').textContent=`${n.title}, ${n.fields.length} items to explore.`;
+  detail.innerHTML=`<div class="detail-heading">${glyph(n)}<div><h3>${esc(n.title)}</h3><span class="file-label">${esc(n.file)}</span></div></div>
+    <p class="detail-copy">${esc(n.about)}</p><div class="detail-facts">${n.facts.map(f=>`<span class="pill ${n.kind}">${esc(f)}</span>`).join('')}</div>
+    <div class="column-head">${n.heading||(id==='params'?'Parameters':'Columns')}<span>${n.fields.length} to explore</span></div>
+    <div class="column-list" aria-label="${esc(n.title)} fields">${n.fields.map(([name,role],i)=>`<button type="button" class="column-row" data-field="${id}:${i}"><code>${esc(name)}</code>${badge(role)}${icon('chevron')}</button>`).join('')}</div>
+    <div class="inspector-actions">${n.action?button(...n.action):''}${n.links.map(link).join('')}</div>`;
+  filterNodes(); renderEdges(animate);
+  if(animate) motion(detail);
+  if(scroll&&matchMedia('(max-width: 780px)').matches) document.querySelector('#inspector').scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'start'});
+}
+
+function showDialog(title,html,source){
+  const fresh=!dialog.open;
+  if(fresh) opener=source||document.activeElement;
+  document.querySelector('#dialog-title').textContent=title;
+  dialogContent.innerHTML=html;
+  if(fresh) dialog.showModal();
+  dialog.scrollTop=0;
+  (dialogContent.querySelector('[data-autofocus]')||document.querySelector('#close-dialog')).focus({preventScroll:true});
+  if(!reduced.matches){
+    const from=opener?.getBoundingClientRect();
+    const to=dialog.getBoundingClientRect();
+    if(from&&fresh){
+      const x=Math.max(0,Math.min(to.width,from.x+from.width/2-to.x));
+      const y=Math.max(0,Math.min(to.height,from.y+from.height/2-to.y));
+      dialog.style.transformOrigin=`${x}px ${y}px`;
+    }
+    motion(fresh?dialog:dialogContent, fresh?9:4);
+  }
+}
+function openField(ref,source,back=false){
+  const [id,index]=ref.split(':');
+  const n=nodes[id];
+  const [name,role,explanation,origins]=n.fields[Number(index)];
+  const fieldButtons=references=>references.map(sourceRef=>{
+    const [sourceId,field]=sourceRef.split(':');
+    const i=nodes[sourceId].fields.findIndex(([sourceName])=>sourceName===field);
+    return `<button type="button" class="action" data-field="${sourceId}:${i}" ${back?'data-from-index':''}><code>${esc(field)}</code>${icon('arrow')}</button>`;
+  }).join('');
+  const sourceFields=fieldButtons(fieldSources[id==='sets'?'agent':id]?.[name]||[]);
+  const matchingFields=fieldButtons(relatedFields[id]?.[name]||[]);
+  showDialog(n.heading?'Build step':'Column lineage',`${back?button('Back to column index','index','search'):''}<div style="margin-top:8px">${badge(role)} <span class="file-label">${esc(n.file)}</span></div><strong class="field-name">${esc(name)}</strong><p>${esc(explanation)}</p>
+    ${sourceFields?`<h3>Trace the input columns</h3><div class="sources">${sourceFields}</div>`:''}
+    ${matchingFields?`<h3>Matching exercise identifier</h3><div class="sources">${matchingFields}</div>`:''}
+    ${origins.length?`<h3>Connected stages</h3><div class="sources">${origins.map(origin=>button(nodes[origin].title,`node:${origin}`,nodes[origin].icon)).join('')}</div>`:''}`,source);
+}
+function openIndex(source){
+  showDialog('Column index','<p>Search source fields, BKT parameters, or agent columns.</p><label class="sr-only" for="column-search">Search columns</label><input id="column-search" class="search" type="search" placeholder="Search columns, e.g. correct" data-autofocus><div class="results" id="search-results"></div>',source);
+  const input=document.querySelector('#column-search');
+  const indexNodes=['raw','metadata','map','bkt','params','sets'];
+  const items=indexNodes.flatMap(id=>nodes[id].fields.map(([name,role,description],i)=>({id,i,name,role,description})));
+  const render=()=>{
+    const query=input.value.trim().toLowerCase();
+    const found=items.filter(x=>`${x.name} ${x.role} ${x.description} ${nodes[x.id].title}`.toLowerCase().includes(query));
+    document.querySelector('#search-results').innerHTML=found.length?found.map(({id,i,name})=>`<button class="column-row" type="button" data-field="${id}:${i}" data-from-index><code>${esc(name)}</code><span class="result-source">${esc(nodes[id].title)}</span>${icon('chevron')}</button>`).join(''):'<p>No columns match this search.</p>';
+  };
+  input.addEventListener('input',render); render();
+}
+function showExample(source){
+  showDialog('From history to target',`<p>In this example, Pathgen is deciding whether to show question 5. The four earlier encounters are already recorded.</p><div class="history-demo"><div><b>Questions 1–3</b>Earlier practice</div><div><b>Question 4</b>Last result and behavior</div><div><b>Question 5</b>Candidate and future label</div></div><p>If the student took two tries and used a hint on question 4, those facts appear in <code>last_attempt_count</code> and <code>last_hint_used</code>. The recent summaries use questions 1–4.</p><p>The candidate skill comes from the map. Mastery is recorded before question 5. Once its outcome is known, one correct attempt without a hint gives <code>struggle_on_next_question = 0</code>.</p><div class="sources">${button('Inspect agent fields','node:agent','code')}${button('Inspect BKT parameters','node:params','sliders')}</div>`,source);
+}
+function showRules(source){
+  showDialog('The 16 skill mapping rules',`<p>The pair <code>exercise</code> + <code>problem_type</code> is the key. <code>modeled_skill_id</code> identifies the current skill. The legacy <code>approved_skill_id</code> groups are separate.</p><div class="table-wrap"><table class="data-table"><thead><tr><th>Rule</th><th>Exercise</th><th>Type</th><th>Modeled skill</th><th>Legacy group</th></tr></thead><tbody>${rules.map((row,i)=>`<tr>${[...row,legacyGroups[i]].map(v=>`<td><code>${esc(v)}</code></td>`).join('')}</tr>`).join('')}</tbody></table></div>`,source);
+}
+function showSplits(source){
+  showDialog('Three student splits',`<p>Split by learner before sampling. Keep the outcome mix within each skill close to Junyi’s observed rates.</p><div class="table-wrap"><table class="data-table"><thead><tr><th>File</th><th>Per skill</th><th>Total</th><th>Use</th></tr></thead><tbody><tr><td>Training</td><td>10,000</td><td>100,000</td><td>Fit the agent</td></tr><tr><td>Validation</td><td>2,500</td><td>25,000</td><td>Choose model settings</td></tr><tr><td>Testing</td><td>3,000</td><td>30,000</td><td>Score the final model</td></tr></tbody></table></div><div class="trace-note">All 155,000 labels were checked against Junyi. A separate audit reconstructed earlier behavior and difficulty for 90 sampled rows and checked frozen BKT mastery on the validation and test samples.</div>`,source);
+}
+function showMetadata(source){
+  showDialog('How the two Junyi CSVs connect',`<div class="table-wrap"><table class="data-table"><thead><tr><th>File</th><th>What a row describes</th><th>Exercise identifier</th></tr></thead><tbody><tr><td><code>junyi_ProblemLog_original.csv</code></td><td>A student’s practice encounter with its time, result, attempts, and hints.</td><td><code>exercise</code></td></tr><tr><td><code>junyi_Exercise_table.csv</code></td><td>An exercise in the catalog, with topic, area, display names, prerequisites, and timing reference.</td><td><code>name</code></td></tr></tbody></table></div><h3>Example</h3><p>A log encounter with <code>exercise = adding_and_subtracting_negative_numbers</code> matches the catalog row with the same <code>name</code>. The log’s <code>problem_type</code> then tells the reviewed skill map whether that encounter is <code>PLUS</code> or <code>MINUS</code>.</p><h3>What the builders use</h3><p>The catalog has 837 rows and 835 distinct exercise names. Two names are duplicated. The map builder checks that all nine exercise names used by its 16 rules each appear exactly once. BKT and the agent assign skills from <code>skill_map.csv</code> using the pair <code>exercise</code> + <code>problem_type</code>.</p><div class="sources">${button('Inspect catalog columns','node:metadata','table')}${button('Inspect the map builder','node:map-builder','code')}${button('Inspect the skill map','node:map','map')}</div>`,source);
+}
+function showCreation(id,source){
+  const n=nodes[id];
+  const title=id==='map-builder'?'How the skill map was built':'How the fitting CSV was built';
+  showDialog(title,`<p><code>${esc(n.file)}</code></p><ol class="process-list">${n.fields.map(([step,,description])=>`<li><strong>${esc(step)}</strong><p>${esc(description)}</p></li>`).join('')}</ol><div class="sources">${n.links.map(link).join('')}${button(id==='map-builder'?'Inspect skill map':'Inspect capped CSV',id==='map-builder'?'node:map':'node:bkt','table')}</div>`,source);
+}
+function showBktFit(source){
+  showDialog('How BKT was fitted',`<p>The notebook reads the <strong>263,813-row capped fitting CSV</strong> and uses each student’s ordered binary responses to fit a separate model for each mapped skill.</p><ol class="process-list"><li><strong>Fit four probabilities.</strong><p>Estimate initial mastery, learning, guessing, and slipping. Forgetting is fixed at zero. The notebook maximizes the likelihood of the observed sequences and keeps the best converged fit from eight starting points per skill.</p></li><li><strong>Check on validation students.</strong><p>Predict each response before using it to update mastery. The ten fits beat the per-skill constant baseline on the held-out Junyi validation set.</p></li><li><strong>Save fitted parameters.</strong><p>The notebook exports <code>bkt_parameters.json</code>. The agent generator uses this frozen fit for validation and test rows. It refits BKT on other training students for the training mastery feature.</p></li></ol><div class="sources">${nodes.params.links.map(link).join('')}${button('Inspect the fitting CSV','node:bkt','table')}</div>`,source);
+}
+document.querySelector('#open-index').addEventListener('click',e=>openIndex(e.currentTarget));
+document.querySelector('#show-example').addEventListener('click',e=>showExample(e.currentTarget));
+document.querySelector('#close-dialog').addEventListener('click',()=>dialog.close());
+dialog.addEventListener('close',()=>{opener?.focus({preventScroll:true});opener=null;});
+dialog.addEventListener('click',e=>{if(e.target===dialog){const b=dialog.getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)dialog.close();}});
+document.addEventListener('click',e=>{
+  const control=e.target.closest('button'); if(!control)return;
+  if(control.dataset.node)selectNode(control.dataset.node,{scroll:true});
+  if(control.dataset.filter){filter=control.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===control)));filterNodes();renderEdges(true);}
+  if(control.dataset.field)openField(control.dataset.field,control,control.hasAttribute('data-from-index'));
+  const action=control.dataset.action;
+  if(action==='index')openIndex(control);
+  if(action==='rules')showRules(control);
+  if(action==='metadata')showMetadata(control);
+  if(action==='map-creation')showCreation('map-builder',control);
+  if(action==='fitting-creation')showCreation('fit-builder',control);
+  if(action==='bkt-fit')showBktFit(control);
+  if(action==='example')showExample(control);
+  if(action==='splits')showSplits(control);
+  if(action?.startsWith('node:')){const id=action.slice(5);dialog.close();selectNode(id,{scroll:true});requestAnimationFrame(()=>document.querySelector(`#node-${id}`).focus({preventScroll:true}));}
+});
+new ResizeObserver(()=>renderEdges()).observe(graph);
+selectNode('raw',{animate:false});
+</script>
+</body>
+</html>
